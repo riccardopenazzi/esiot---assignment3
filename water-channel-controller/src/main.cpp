@@ -1,13 +1,28 @@
 #include <Arduino.h>
+#include <Scheduler.h>
+#include "Components/Components.h"
+#include "State/StateManager.h"
+#include "MsgService.h"
+#include "Tasks/StateManagerTask.h"
 
-
+Scheduler* sched;
+Components* components;
+StateManager* stateManager;
 
 void setup() {
-  Serial.begin(9600);
+  MsgService.init();
+  components = new Components();
+  sched = new Scheduler();
+  sched->init(100); //GCD of all tasks
+
+  stateManager = new StateManager(components,sched);
+
+  Task* stateManagerTask = new StateManagerTask(stateManager);
+  stateManagerTask->init(100);
+  sched->addTask(stateManagerTask);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.println("Hello, world!");
-  delay(1000);
+  sched->schedule();
+  Serial.println("loop");
 }
