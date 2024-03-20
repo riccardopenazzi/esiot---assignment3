@@ -19,7 +19,7 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
     this->components->getValve()->on();
     this->components->getValve()->setPosition(this->valveAngle);
 
-    enableInterruptLib(PIN_BUTTON, this->buttonPressedCallback, RISING);
+    enableInterruptLib(PIN_BUTTON,this->buttonPressedCallback , RISING);
 }
 
 bool StateManual::goNext(){
@@ -38,5 +38,5 @@ void StateManual::closeValve(){
 
 StateManual::~StateManual(){
     this->components->getValve()->off();
-    disableInterruptLib(PIN_BUTTON);
+    //disableInterruptLib(PIN_BUTTON);
 }

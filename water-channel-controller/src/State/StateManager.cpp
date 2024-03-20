@@ -12,6 +12,7 @@ StateManager::StateManager(Components* components, Scheduler* scheduler){
 
 void StateManager::switchState(){
     if(this->state->goNext()){
+        Serial.println(getStateNameString(this->state->name()));
         StateName currentState = this->state->name();
         State* nextState;
         if(currentState == StateName::Manual){
@@ -31,4 +32,8 @@ State* StateManager::stateFactory(StateName stateName){
     else if(stateName==StateName::Remote){
         return new StateRemote(this->state->valveAngle, this->components, this->scheduler);
     }
+}
+
+StateName StateManager::getCurrentState(){
+    return this->state->name();
 }

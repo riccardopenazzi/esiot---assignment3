@@ -7,7 +7,7 @@
 bool goToManual;
 
 StateName StateRemote::name(){
-    return StateName::Manual;
+    return StateName::Remote;
 }
 
 StateRemote::StateRemote(int valveAngle, Components* components, Scheduler* scheduler){
@@ -38,5 +38,5 @@ void StateRemote::closeValve(){
 
 StateRemote::~StateRemote(){
     this->components->getValve()->off();
-    disableInterruptLib(PIN_BUTTON);
+    //disableInterruptLib(PIN_BUTTON);
 }

@@ -4,6 +4,7 @@
 #include "State/StateManager.h"
 #include "MsgService.h"
 #include "Tasks/StateManagerTask.h"
+#include "EnableinterruptLib.h"
 
 Scheduler* sched;
 Components* components;
@@ -24,5 +25,10 @@ void setup() {
 
 void loop() {
   sched->schedule();
-  Serial.println("loop");
+  //Serial.println("loop");
+  /*
+    if(components->getModeButton()->isPressed()){
+    Serial.println("Button pressed");
+  }
+  */
 }
