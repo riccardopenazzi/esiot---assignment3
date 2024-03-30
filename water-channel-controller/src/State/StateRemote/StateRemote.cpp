@@ -38,5 +38,4 @@ void StateRemote::closeValve(){
 
 StateRemote::~StateRemote(){
     this->components->getValve()->off();
-    //disableInterruptLib(PIN_BUTTON);
 }

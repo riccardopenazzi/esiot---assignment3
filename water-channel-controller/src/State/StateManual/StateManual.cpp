@@ -3,6 +3,7 @@
 #include <Config.h>
 #include "StateManual.h"
 #include "EnableinterruptLib.h"
+#include "Tasks/ManualValve/ManualValve.h"
 
 bool backToRemote;
 
@@ -17,26 +18,20 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
     backToRemote = false;
 
     this->components->getValve()->on();
-    this->components->getValve()->setPosition(this->valveAngle);
 
     enableInterruptLib(PIN_BUTTON,this->buttonPressedCallback , RISING);
+
+    //manual valve controlled by potentiometer
+    Task* manaulValveTask = new ManualValve(this->components);
+    manaulValveTask->init(100);
+    this->scheduler->addTask(manaulValveTask);
 }
 
 bool StateManual::goNext(){
     return backToRemote;
 }
 
-void StateManual::openValve(){
-    this->valveAngle = VALVE_OPEN;
-    this->components->getValve()->setPosition(this->valveAngle);
-}
-
-void StateManual::closeValve(){
-    this->valveAngle = VALVE_CLOSE;
-    this->components->getValve()->setPosition(this->valveAngle);
-}
-
 StateManual::~StateManual(){
+    scheduler->removeLastTask(); //remove manual valve task
     this->components->getValve()->off();
-    //disableInterruptLib(PIN_BUTTON);
 }

@@ -19,8 +19,6 @@ class StateManual: public State {
         ~StateManual();
         StateName name();
         bool goNext();
-        void openValve();
-        void closeValve();
 };
 
 #endif

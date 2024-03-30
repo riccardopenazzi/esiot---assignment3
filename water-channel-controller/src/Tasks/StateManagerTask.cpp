@@ -10,6 +10,5 @@ void StateManagerTask::init(int period) {
 }
 
 void StateManagerTask::tick() {
-    //Serial.println(getStateNameString(this->stateManager->getCurrentState()));  
     this->stateManager->switchState();
 }

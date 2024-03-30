@@ -16,6 +16,7 @@ Components::Components() {
     this->lcd = new LcdScreen();
 
     this->valve->on();
+    pinMode(PIN_POTENTIOMETER, INPUT);
 }
 
 ButtonImpl* Components::getModeButton() {

@@ -25,10 +25,4 @@ void setup() {
 
 void loop() {
   sched->schedule();
-  //Serial.println("loop");
-  /*
-    if(components->getModeButton()->isPressed()){
-    Serial.println("Button pressed");
-  }
-  */
 }

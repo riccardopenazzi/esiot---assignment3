@@ -7,12 +7,11 @@
 StateManager::StateManager(Components* components, Scheduler* scheduler){
     this->components = components;
     this->scheduler = scheduler;
-    this->state = stateFactory(StateName::Remote);
+    this->state = new StateRemote(VALVE_CLOSE, this->components, this->scheduler);
 }
 
 void StateManager::switchState(){
     if(this->state->goNext()){
-        Serial.println(getStateNameString(this->state->name()));
         StateName currentState = this->state->name();
         State* nextState;
         if(currentState == StateName::Manual){
@@ -22,6 +21,7 @@ void StateManager::switchState(){
         }
         delete this->state;
         this->state = nextState;
+        Serial.println(getStateNameString(this->state->name()));
     }
 }
 
