@@ -9,7 +9,6 @@ ManualValve::ManualValve(Components* components){
   
 void ManualValve::init(int period){
   Task::init(period);
-  Serial.println("ManualValve init");
 }
   
 void ManualValve::tick(){

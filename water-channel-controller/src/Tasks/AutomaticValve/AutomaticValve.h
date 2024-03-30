@@ -1,16 +1,16 @@
-#ifndef __TASK_MANUAL_VALVE__
-#define __TASK_MANUAL_VALVE__
+#ifndef __TASK_AUTOMATIC_VALVE__
+#define __TASK_AUTOMATIC_VALVE__
 
 #include "Task.h"
 #include "servo_motor_impl.h"
 #include "Components/Components.h"
 
-class ManualValve: public Task {
+class AutomaticValve: public Task {
   private:
     Components* components;
     int potentiometer;
   public:
-    ManualValve(Components* components);  
+    AutomaticValve(Components* components);  
     void init(int period);  
     void tick();
 };

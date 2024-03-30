@@ -3,6 +3,7 @@
 #include <Config.h>
 #include "StateAutomatic.h"
 #include "EnableinterruptLib.h"
+#include "Tasks/AutomaticValve/AutomaticValve.h"
 
 bool goToManual;
 
@@ -24,6 +25,11 @@ StateAutomatic::StateAutomatic(int valveAngle, Components* components, Scheduler
     components->getLcd()->print("Automatic");
 
     enableInterruptLib(PIN_BUTTON, this->buttonPressedCallback, RISING);
+
+    //automatic valve controlled by serial communication
+    Task* automaticValveTask = new AutomaticValve(this->components);
+    automaticValveTask->init(100);
+    this->scheduler->addTask(automaticValveTask);
 }
 
 bool StateAutomatic::goNext(){

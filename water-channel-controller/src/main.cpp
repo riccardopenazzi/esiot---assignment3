@@ -20,7 +20,7 @@ void setup() {
 
   Task* stateManagerTask = new StateManagerTask(stateManager);
   stateManagerTask->init(100);
-  sched->addTask(stateManagerTask);
+  sched->addTask(stateManagerTask);  
 }
 
 void loop() {
