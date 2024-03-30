@@ -21,6 +21,10 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
 
     enableInterruptLib(PIN_BUTTON,this->buttonPressedCallback , RISING);
 
+    components->getLcd()->clear();
+    components->getLcd()->setCursor(0, 0); 
+    components->getLcd()->print("Manual");
+
     //manual valve controlled by potentiometer
     Task* manaulValveTask = new ManualValve(this->components);
     manaulValveTask->init(100);

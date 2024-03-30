@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 
-enum StateName { Remote, Manual };
+enum StateName { Automatic, Manual };
 
 String getStateNameString(StateName stateName);
 

@@ -2,8 +2,8 @@
 
 String getStateNameString(StateName stateName){
     switch(stateName){
-        case StateName::Remote:
-            return "Remote";
+        case StateName::Automatic:
+            return "Automatic";
         case StateName::Manual:
             return "Manual";
         default:

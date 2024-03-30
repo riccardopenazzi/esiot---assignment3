@@ -2,12 +2,12 @@
 #include "StateManager.h"
 #include "State/State.h"
 #include "State/StateManual/StateManual.h"
-#include "State/StateRemote/StateRemote.h"
+#include "State/StateAutomatic/StateAutomatic.h"
 
 StateManager::StateManager(Components* components, Scheduler* scheduler){
     this->components = components;
     this->scheduler = scheduler;
-    this->state = new StateRemote(VALVE_CLOSE, this->components, this->scheduler);
+    this->state = new StateAutomatic(VALVE_CLOSE, this->components, this->scheduler);
 }
 
 void StateManager::switchState(){
@@ -15,13 +15,13 @@ void StateManager::switchState(){
         StateName currentState = this->state->name();
         State* nextState;
         if(currentState == StateName::Manual){
-            nextState = stateFactory(StateName::Remote);
+            nextState = stateFactory(StateName::Automatic);
         } else {
             nextState = stateFactory(StateName::Manual);
         }
         delete this->state;
         this->state = nextState;
-        Serial.println(getStateNameString(this->state->name()));
+        //Serial.println(getStateNameString(this->state->name()));
     }
 }
 
@@ -29,8 +29,8 @@ State* StateManager::stateFactory(StateName stateName){
     if(stateName==StateName::Manual){
         return new StateManual(this->state->valveAngle, this->components, this->scheduler);
     }
-    else if(stateName==StateName::Remote){
-        return new StateRemote(this->state->valveAngle, this->components, this->scheduler);
+    else if(stateName==StateName::Automatic){
+        return new StateAutomatic(this->state->valveAngle, this->components, this->scheduler);
     }
 }
 

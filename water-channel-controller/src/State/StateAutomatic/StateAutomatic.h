@@ -1,5 +1,5 @@
-#ifndef __STATE_REMOTE__
-#define __STATE_REMOTE__
+#ifndef __STATE_AUTOMATIC__
+#define __STATE_AUTOMATIC__
 
 #include <Scheduler.h>
 #include "State/State.h"
@@ -7,7 +7,7 @@
 
 extern bool goToManual;
 
-class StateRemote: public State {
+class StateAutomatic: public State {
     private:
         static void buttonPressedCallback(){
             goToManual = true;
@@ -15,8 +15,8 @@ class StateRemote: public State {
         Components* components;
         Scheduler* scheduler;
     public:
-        StateRemote(int valveAngle, Components* components, Scheduler* scheduler);
-        ~StateRemote();
+        StateAutomatic(int valveAngle, Components* components, Scheduler* scheduler);
+        ~StateAutomatic();
         StateName name();
         bool goNext();
         void openValve();
