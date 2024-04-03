@@ -26,7 +26,6 @@ java {
 }
 
 dependencies {
-    // Suppressions for SpotBugs
 
     implementation("com.googlecode.json-simple:json-simple:1.1")
 

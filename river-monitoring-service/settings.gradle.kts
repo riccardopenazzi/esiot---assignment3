@@ -7,4 +7,4 @@
  * in the user manual at https://docs.gradle.org/8.1/userguide/multi_project_builds.html
  */
 
-rootProject.name = "OOP22-RisikOOP"
+rootProject.name = "river-monitoring-service_esiot3-assignment"
