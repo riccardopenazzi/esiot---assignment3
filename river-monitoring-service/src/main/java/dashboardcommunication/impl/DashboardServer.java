@@ -20,7 +20,7 @@ import dashboardcommunication.api.SystemState;
 public class DashboardServer {
 
     private static final int PORT = 8080;
-
+    private static int valveLevel = 42;
     public static void main(String[] args) throws IOException, InterruptedException {
         ServerSocket server = new ServerSocket(PORT);
         Socket socket = server.accept();
@@ -45,18 +45,17 @@ public class DashboardServer {
         });
 
         String temp = "";
-        long value = 0L;
 
         while ((temp = reader.readLine()) != null) {
-            value = Long.parseLong(temp);
-            System.out.println("Value: " + value);
+            valveLevel = Integer.parseInt((temp));
+
+            System.out.println("Value: " + valveLevel);
         }
         server.close();
     }
 
     private static String createData() {
         SystemState state = new SystemStateImpl(SystemState.State.NORMAL);
-        int valveLevel = 42;
         List<Integer> dataList = Arrays.asList(1, 2, 3, 4, 5);
 
         JSONObject jsonObject = new JSONObject();
