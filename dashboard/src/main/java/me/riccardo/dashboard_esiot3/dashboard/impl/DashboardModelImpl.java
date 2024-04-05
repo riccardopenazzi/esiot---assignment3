@@ -1,5 +1,6 @@
 package me.riccardo.dashboard_esiot3.dashboard.impl;
 
+import me.riccardo.dashboard_esiot3.dashboard.api.DashboardController;
 import me.riccardo.dashboard_esiot3.dashboard.api.DashboardModel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,12 +24,12 @@ public class DashboardModelImpl implements DashboardModel {
     private BufferedReader reader;
     private String riverLevel;
     private int valveLevel;
-    private final DashboardController dsController;
+    private final DashboardController controller;
 
-    public DashboardModelImpl(final String riverLevel, final int valveLevel, final DashboardController dsController) throws IOException {
+    public DashboardModelImpl(final String riverLevel, final int valveLevel, final DashboardController controller) {
         this.riverLevel = riverLevel;
         this.valveLevel = valveLevel;
-        this.dsController = dsController;
+        this.controller = controller;
         Thread thread = new Thread(() ->{
             try {
                 this.client = new Socket(HOST, PORT);
@@ -49,35 +50,11 @@ public class DashboardModelImpl implements DashboardModel {
         thread.start();
     }
 
-    public void getUpdates(final String data) {
-        System.out.println("GETUPDATE");
-        try {
-            final JSONParser parser = new JSONParser();
-            final JSONObject jsonObject = (JSONObject) parser.parse(data);
-            this.riverLevel = jsonObject.get("state").toString();
-            //System.out.println();
-            int tmp = Integer.parseInt(jsonObject.get("valve_level").toString());
-            final JSONArray jsonArray = (JSONArray) jsonObject.get("numbers");
-
-            final StringBuilder numbers = new StringBuilder();
-            for (final Object obj : jsonArray) {
-                numbers.append(obj).append(", ");
-            }
-            this.valveLevel = tmp;
-            System.out.println("hhhshs: " + tmp);
-            System.out.println("Numbers: " + numbers.toString());
-            System.out.println("River level: " + this.riverLevel + "; Valve level: " + this.valveLevel);
-            this.dsController.setValues(this.riverLevel, this.valveLevel);
-        } catch (final ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
+    @Override
     public void sendUpdates(final int value) {
         this.valveLevel = value;
         this.out.println(this.valveLevel);
         this.out.flush();
-        //this.dsController.setValues(this.riverLevel, this.valveLevel);
     }
 
     @Override
@@ -93,5 +70,27 @@ public class DashboardModelImpl implements DashboardModel {
     @Override
     public void setValveLevel(int level) {
         this.valveLevel = level;
+    }
+
+    private void getUpdates(final String data) {
+        try {
+            final JSONParser parser = new JSONParser();
+            final JSONObject jsonObject = (JSONObject) parser.parse(data);
+            this.riverLevel = jsonObject.get("state").toString();
+            this.valveLevel = Integer.parseInt(jsonObject.get("valve_level").toString());
+            final JSONArray jsonArray = (JSONArray) jsonObject.get("numbers");
+
+            final StringBuilder numbers = new StringBuilder();
+            for (final Object obj : jsonArray) {
+                numbers.append(obj).append(", ");
+            }
+
+            System.out.println("hhhshs: " + this.valveLevel);
+            System.out.println("Numbers: " + numbers.toString());
+            System.out.println("River level: " + this.riverLevel + "; Valve level: " + this.valveLevel);
+            this.controller.setValues(this.riverLevel, this.valveLevel);
+        } catch (final ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

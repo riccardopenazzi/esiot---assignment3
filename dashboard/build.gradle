@@ -26,7 +26,7 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'me.riccardo.dashboard_esiot3.dashboard'
-    mainClass = 'me.riccardo.dashboard_esiot3.dashboard.impl.DashboardView'
+    mainClass = 'me.riccardo.dashboard_esiot3.dashboard.impl.DashboardApplication'
 }
 
 javafx {
