@@ -66,6 +66,7 @@ public class DashboardModelImpl implements DashboardModel {
             this.valveLevel = tmp;
             System.out.println("hhhshs: " + tmp);
             System.out.println("Numbers: " + numbers.toString());
+            System.out.println("River level: " + this.riverLevel + "; Valve level: " + this.valveLevel);
             this.dsController.setValues(this.riverLevel, this.valveLevel);
         } catch (final ParseException e) {
             e.printStackTrace();

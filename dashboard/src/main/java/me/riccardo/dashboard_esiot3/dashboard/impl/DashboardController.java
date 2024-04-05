@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -36,7 +37,7 @@ public class DashboardController implements Initializable {
     }
 
     @FXML
-    void saveValue(MouseEvent event) {
+    void saveValue(final MouseEvent event) {
         System.out.println("Save");
         if (!this.txtValve.getText().isEmpty()) {
             this.model.sendUpdates(Integer.parseInt(this.txtValve.getText()));
@@ -45,15 +46,20 @@ public class DashboardController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        this.lb_status.setText(this.model.getLevel());
-        this.lb_level.setText(String.valueOf(this.model.getValveLevel()));
+    public void initialize(final URL location, final ResourceBundle resources) {
+        if (this.model != null) {
+            this.lb_status.setText(this.model.getLevel());
+            this.lb_level.setText(String.valueOf(this.model.getValveLevel()));
+        }
     }
 
     public void setValues(final String state, final int valve) {
-        if (this.lb_status != null && this.lb_level != null) {
-            this.lb_status.setText(state);
-            this.lb_level.setText(String.valueOf(valve));
-        }
+        /* To ensure that it runs on the JavaFX Application Thread */
+        Platform.runLater(() -> {
+            if (this.lb_status != null && this.lb_level != null) {
+                this.lb_status.setText(state);
+                this.lb_level.setText(String.valueOf(valve));
+            }
+        });
     }
 }
