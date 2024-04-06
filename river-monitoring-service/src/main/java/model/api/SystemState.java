@@ -1,4 +1,4 @@
-package dashboardcommunication.api;
+package model.api;
 
 public interface SystemState {
 

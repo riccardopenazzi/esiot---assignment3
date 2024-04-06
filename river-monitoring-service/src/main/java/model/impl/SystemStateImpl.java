@@ -1,6 +1,6 @@
-package dashboardcommunication.impl;
+package model.impl;
 
-import dashboardcommunication.api.SystemState;
+import model.api.SystemState;
 
 public class SystemStateImpl implements SystemState {
 

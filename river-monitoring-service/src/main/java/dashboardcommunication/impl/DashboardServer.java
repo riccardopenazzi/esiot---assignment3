@@ -3,6 +3,11 @@ package dashboardcommunication.impl;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import model.api.Logic;
+import model.api.SystemState;
+import model.impl.LogicImpl;
+import model.impl.SystemStateImpl;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,8 +19,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import dashboardcommunication.api.SystemState;
+import java.util.Random;
 
 public class DashboardServer {
 
@@ -31,18 +35,21 @@ public class DashboardServer {
         BufferedReader reader = new BufferedReader(in);
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
+        Logic logic = new LogicImpl(randomizer());
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             while (true) {
                 String data = createData();
                 out.println(data);
+                logic.updateEnvironment(randomizer());
                 try {
                     TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        });
+        }); 
 
         String temp = "";
 
@@ -65,5 +72,11 @@ public class DashboardServer {
         jsonArray.addAll(dataList);
         jsonObject.put("numbers", jsonArray);
         return jsonObject.toJSONString();
+    }
+
+    private static double randomizer() {
+        double leftLimit = 1D;
+        double rightLimit = 10D;
+        return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
     }
 }
