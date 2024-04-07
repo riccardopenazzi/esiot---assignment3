@@ -33,22 +33,22 @@ public class LogicImpl implements Logic {
             this.state = State.ALARM_TOO_LOW;
             this.frequency = F1;
             this.valveLevel = VL1;
-        /* WL1 <= water level <= WL2 */
+            /* WL1 <= water level <= WL2 */
         } else if (wl <= WL2) {
             this.state = State.NORMAL;
             this.valveLevel = VL2;
             this.frequency = F1;
-        /* WL2 < water level <= WL3 */
+            /* WL2 < water level <= WL3 */
         } else if (wl <= WL3) {
             this.state = State.PRE_ALARM_TOO_HIGH;
             this.frequency = F2;
             this.valveLevel = VL2;
-        /* WL3 < water level <= WL4 */
+            /* WL3 < water level <= WL4 */
         } else if (wl <= WL4) {
             this.state = State.ALARM_TOO_HIGH;
             this.frequency = F2;
             this.valveLevel = VL3;
-        /* water level > WL4 */
+            /* water level > WL4 */
         } else {
             this.state = State.ALARM_TOO_HIGH_CRITIC;
             this.frequency = F2;
@@ -56,10 +56,13 @@ public class LogicImpl implements Logic {
         }
 
         System.out.println(
-            "WATER: " + wl + "\n" +
-            "STATE: " + this.state + "\n" +
-            "FREQ: " + this.frequency + "\n" +
-            "VALVE: " + this.valveLevel + "\n"
-        );
+                "WATER: " + wl + "\n" +
+                        "STATE: " + this.state + "\n" +
+                        "FREQ: " + this.frequency + "\n" +
+                        "VALVE: " + this.valveLevel + "\n");
+    }
+
+    public double getFrequency() {
+        return this.frequency;
     }
 }
