@@ -1,5 +1,7 @@
 package dashboardcommunication.impl;
 
+import jssc.CommChannel;
+import jssc.SerialCommChannel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -29,8 +31,9 @@ public class DashboardServer {
     private static int valveLevel = 42;
     private static final String mqttBroker = "tcp://test.mosquitto.org:1883";
     private static double waterLevel;
-
-    public static void main(String[] args) throws IOException, InterruptedException {
+    private static final String SerialPort = "COM3";
+    private static final int SerialRate = 9600;
+    public static void main(String[] args) throws Exception {
         ServerSocket server = new ServerSocket(PORT);
         Socket socket = server.accept();
 
@@ -49,6 +52,9 @@ public class DashboardServer {
         InputStreamReader in = new InputStreamReader(socket.getInputStream());
         BufferedReader reader = new BufferedReader(in);
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+        //SerialConnection
+        CommChannel channel = new SerialCommChannel(SerialPort,SerialRate);
 
         Logic logic = new LogicImpl(randomizer());
 
@@ -71,7 +77,7 @@ public class DashboardServer {
 
         while ((temp = reader.readLine()) != null) {
             valveLevel = Integer.parseInt((temp));
-
+            channel.sendMsg(String.valueOf(valveLevel));
             System.out.println("Value: " + valveLevel);
         }
         server.close();
