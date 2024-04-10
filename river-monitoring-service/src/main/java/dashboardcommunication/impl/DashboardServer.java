@@ -28,24 +28,17 @@ import java.util.Random;
 public class DashboardServer {
 
     private static final int PORT = 8080;
-    private static int valveLevel = 42;
     private static final String mqttBroker = "tcp://test.mosquitto.org:1883";
     private static double waterLevel;
-    private static final String SerialPort = "COM3";
+    private static final String SerialPort = "COM8";
     private static final int SerialRate = 9600;
+    private static boolean msgReceived = false;
+    private static double oldFrequency = -1;
+    private static String serialMsg;
+
     public static void main(String[] args) throws Exception {
         ServerSocket server = new ServerSocket(PORT);
         Socket socket = server.accept();
-
-        MqttManager mqttManager = new MqttManager(mqttBroker);
-        mqttManager.setOnMessageReceivedListener(new OnMessageReceivedListener() {
-            @Override
-            public void onMessageReceived(String topic, String message) {
-                System.out.println("Messaggio ricevuto: " + message);
-                waterLevel = Integer.parseInt(message);
-            }
-
-        });
 
         System.out.println("Client connected");
 
@@ -53,22 +46,53 @@ public class DashboardServer {
         BufferedReader reader = new BufferedReader(in);
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-        //SerialConnection
-        CommChannel channel = new SerialCommChannel(SerialPort,SerialRate);
+        // SerialConnection
+        CommChannel channel = new SerialCommChannel(SerialPort, SerialRate);
 
         Logic logic = new LogicImpl(randomizer());
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
+            MqttManager mqttManager = new MqttManager(mqttBroker);
+            mqttManager.setOnMessageReceivedListener(new OnMessageReceivedListener() {
+                @Override
+                public void onMessageReceived(String topic, String message) {
+                    System.out.println("Messaggio ricevuto: " + message);
+                    waterLevel = Integer.parseInt(message);
+                    msgReceived = true;
+                    System.out.println("MsgRceived: " + msgReceived);
+                }
+
+            });
             while (true) {
-                String data = createData();
+                // System.out.println("Sto per entrare un attesa");
+                while (!msgReceived) {
+                    /* if (channel.isMsgAvailable()) {
+                        try {
+                            serialMsg = channel.receiveMsg();
+                            
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } */
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                // System.out.println("Fine attesa");
+                msgReceived = false;
+                String data = createData(logic);
                 out.println(data);
                 logic.updateEnvironment(waterLevel);
-                mqttManager.sendMessage(String.valueOf(logic.getFrequency()));
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                // System.out.println("Old: " + oldFrequency + " current: " +
+                // logic.getFrequency());
+                if (oldFrequency != logic.getFrequency() || oldFrequency == -1) {
+                    System.out.println("Aggiorno valore");
+                    mqttManager.sendMessage(String.valueOf(logic.getFrequency()));
+                    oldFrequency = logic.getFrequency();
                 }
             }
         });
@@ -76,23 +100,23 @@ public class DashboardServer {
         String temp = "";
 
         while ((temp = reader.readLine()) != null) {
-            valveLevel = Integer.parseInt((temp));
-            channel.sendMsg(String.valueOf(valveLevel));
-            System.out.println("Value: " + valveLevel);
+            logic.setValveLevel(Integer.parseInt((temp)));
+            channel.sendMsg(String.valueOf(logic.getValveLevel()));
         }
         server.close();
     }
 
-    private static String createData() {
-        SystemState state = new SystemStateImpl(SystemState.State.NORMAL);
+    private static String createData(final Logic logic) {
+        SystemState state = new SystemStateImpl(logic.getState());
         List<Integer> dataList = Arrays.asList(1, 2, 3, 4, 5);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("state", state.getSystemState().getState());
-        jsonObject.put("valve_level", valveLevel);
+        jsonObject.put("valve_level", logic.getValveLevel());
         JSONArray jsonArray = new JSONArray();
         jsonArray.addAll(dataList);
         jsonObject.put("numbers", jsonArray);
+        jsonObject.put("water_level", waterLevel);
         return jsonObject.toJSONString();
     }
 

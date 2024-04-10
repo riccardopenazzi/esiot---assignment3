@@ -5,12 +5,12 @@ import model.api.SystemState.State;
 
 public class LogicImpl implements Logic {
 
-    private static final double WL1 = 2;
-    private static final double WL2 = 4;
-    private static final double WL3 = 6;
-    private static final double WL4 = 8;
-    private static final double F1 = 20;
-    private static final double F2 = 40;
+    private static final double WL1 = 10;
+    private static final double WL2 = 20;
+    private static final double WL3 = 30;
+    private static final double WL4 = 40;
+    private static final double F1 = 0.08;
+    private static final double F2 = 0.12;
     private static final int VL1 = 0;
     private static final int VL2 = 25;
     private static final int VL3 = 50;
@@ -62,7 +62,24 @@ public class LogicImpl implements Logic {
                         "VALVE: " + this.valveLevel + "\n");
     }
 
+    @Override
     public double getFrequency() {
         return this.frequency;
     }
+
+    @Override
+    public int getValveLevel() {
+        return valveLevel;
+    }
+
+    @Override
+    public State getState() {
+        return state;
+    }
+
+    @Override
+    public void setValveLevel(int value) {
+        this.valveLevel = value;
+    }
+
 }

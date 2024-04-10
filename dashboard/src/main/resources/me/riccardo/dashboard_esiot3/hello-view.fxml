@@ -41,7 +41,7 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <LineChart layoutX="135.0" layoutY="164.0" prefHeight="673.0" prefWidth="930.0">
+      <LineChart fx:id="lineChart" layoutX="135.0" layoutY="164.0" prefHeight="673.0" prefWidth="930.0">
         <xAxis>
           <CategoryAxis prefHeight="30.0" prefWidth="794.0" side="BOTTOM" />
         </xAxis>

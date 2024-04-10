@@ -5,6 +5,8 @@ import me.riccardo.dashboard_esiot3.dashboard.api.DashboardController;
 import me.riccardo.dashboard_esiot3.dashboard.api.DashboardModel;
 import me.riccardo.dashboard_esiot3.dashboard.api.DashboardView;
 
+import java.util.HashMap;
+
 public class DashboardControllerImpl implements DashboardController {
 
     private final DashboardModel model;
@@ -21,12 +23,13 @@ public class DashboardControllerImpl implements DashboardController {
     }
 
     @Override
-    public void setValues(final String state, final int valve) {
+    public void setValues(final String state, final int valve, final HashMap<String, Double> waterLevelHistory) {
         /* To ensure that it runs on the JavaFX Application Thread */
         Platform.runLater(() -> {
             if (!this.view.isStatusLabelNull() && !this.view.isValveLevelLabelNull()) {
                 this.view.setStatus(state);
                 this.view.setValveLevel(String.valueOf(valve));
+                this.view.popolateLineChart(waterLevelHistory);
             }
         });
     }

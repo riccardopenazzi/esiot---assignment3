@@ -1,10 +1,16 @@
 package me.riccardo.dashboard_esiot3.dashboard.impl;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -25,6 +31,9 @@ public class DashboardViewImpl implements DashboardView, Initializable {
 
     @FXML
     private TextField txtValve;
+
+    @FXML
+    private LineChart<String, Number> lineChart;
 
     private DashboardController controller;
 
@@ -89,6 +98,24 @@ public class DashboardViewImpl implements DashboardView, Initializable {
             setStatus(this.controller.getRiverLevel());
             setValveLevel(String.valueOf(this.controller.getValveLevel()));
         }
+    }
+
+    @Override
+    @FXML
+    public void popolateLineChart(final HashMap<String, Double> values) {
+        this.lineChart.getData().clear();
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("Time");
+        yAxis.setLabel("Level");
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+        for (Map.Entry<String, Double> entry : values.entrySet()) {
+            String date = entry.getKey();
+            Double value = entry.getValue();
+            series.getData().add(new XYChart.Data<>(date, value));
+        }
+        lineChart.getData().add(series);
     }
 
 }

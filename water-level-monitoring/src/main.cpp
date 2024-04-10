@@ -15,8 +15,8 @@
 long duration, distance;
 int frequency = 1000;
 
-const char *ssid = "ASUS";
-const char *psw = "lucia1999";
+const char *ssid = "**";
+const char *psw = "**";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -64,13 +64,14 @@ void sonar_monitor()
 	duration = pulseIn(ECHO_PIN, HIGH);
 	distance = duration / 58.2;
 	Serial.println("Distance: " + String(distance));
-	client.publish(water_level_topic, String(distance).c_str(), true);
+	client.publish(water_level_topic, String(distance).c_str(), false);
 }
 
 void setup_wifi()
 {
 	delay(10);
 	Serial.println(String("Connecting to ") + ssid);
+	// WiFi.useStaticBuffers(true);
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(ssid, psw);
 	while (WiFi.status() != WL_CONNECTED)
@@ -124,13 +125,13 @@ void reconnect()
 
 void set_frequency(const char *freq)
 {
-	if (strcmp(freq, "3000") == 0)
+	if (strcmp(freq, "0.08") == 0)
 	{
-		frequency = 3000;
+		frequency = 12000;
 	}
-	else if (strcmp(freq, "1000") == 0)
+	else if (strcmp(freq, "0.12") == 0)
 	{
-		frequency = 1000;
+		frequency = 8000;
 	}
 }
 
