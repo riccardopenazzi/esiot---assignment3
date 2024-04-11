@@ -27,10 +27,12 @@ StateAutomatic::StateAutomatic(int valveAngle, Components* components, Scheduler
 
     enableInterruptLib(PIN_BUTTON, this->buttonPressedCallback, RISING);
 
-
+    /*
     if(MsgService.isMsgAvailable()){
         Msg* msg = MsgService.receiveMsg(); //remove message sent during ManualState
     }
+    */
+    MsgService.sendMsg("Automatic");
 
     //automatic valve controlled by serial communication
     Task* automaticValveTask = new AutomaticValve(this->components);

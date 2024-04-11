@@ -1,6 +1,7 @@
 #include "ManualValve.h"
 #include "Config.h"
 #include "Arduino.h"
+#include "MsgService.h"
 
 ManualValve::ManualValve(Components* components){
   this->components = components;    
@@ -16,4 +17,5 @@ void ManualValve::tick(){
   int angle = map(this->potentiometer, 0, 1023, 0, 180);
   this->components->getValve()->on();
   this->components->getValve()->setPosition(angle);
+  MsgService.sendMsg(String(angle));
 }

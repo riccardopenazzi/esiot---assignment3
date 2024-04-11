@@ -4,6 +4,7 @@
 #include "StateManual.h"
 #include "EnableinterruptLib.h"
 #include "Tasks/ManualValve/ManualValve.h"
+#include "MsgService.h"
 
 bool backToRemote;
 
@@ -24,6 +25,8 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
     components->getLcd()->clear();
     components->getLcd()->setCursor(0, 0); 
     components->getLcd()->print("Manual");
+
+    MsgService.sendMsg("Manual");
 
     //manual valve controlled by potentiometer
     Task* manaulValveTask = new ManualValve(this->components);
