@@ -4,7 +4,7 @@
 #include "StateAutomatic.h"
 #include "EnableinterruptLib.h"
 #include "Tasks/AutomaticValve/AutomaticValve.h"
-#include <MsgService.h>
+#include "MsgService.h"
 
 bool goToManual;
 
@@ -26,6 +26,7 @@ StateAutomatic::StateAutomatic(int valveAngle, Components* components, Scheduler
     components->getLcd()->print("Automatic");
 
     enableInterruptLib(PIN_BUTTON, this->buttonPressedCallback, RISING);
+
 
     if(MsgService.isMsgAvailable()){
         Msg* msg = MsgService.receiveMsg(); //remove message sent during ManualState
@@ -52,5 +53,6 @@ void StateAutomatic::closeValve(){
 }
 
 StateAutomatic::~StateAutomatic(){
+    scheduler->removeLastTask(); //remove automatic valve task
     this->components->getValve()->off();
 }
