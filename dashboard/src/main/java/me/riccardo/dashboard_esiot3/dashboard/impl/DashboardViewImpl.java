@@ -2,6 +2,7 @@ package me.riccardo.dashboard_esiot3.dashboard.impl;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -17,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import me.riccardo.dashboard_esiot3.dashboard.api.DashboardController;
 import me.riccardo.dashboard_esiot3.dashboard.api.DashboardView;
+import me.riccardo.dashboard_esiot3.dashboard.api.Pair;
 
 public class DashboardViewImpl implements DashboardView, Initializable {
 
@@ -100,21 +102,36 @@ public class DashboardViewImpl implements DashboardView, Initializable {
         }
     }
 
+    // @Override
+    // @FXML
+    // public void popolateLineChart(final HashMap<String, Double> values) {
+    //     this.lineChart.getData().clear();
+    //     CategoryAxis xAxis = new CategoryAxis();
+    //     NumberAxis yAxis = new NumberAxis();
+    //     xAxis.setLabel("Time");
+    //     yAxis.setLabel("Level");
+    //     XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+    //     for (Map.Entry<String, Double> entry : values.entrySet()) {
+    //         String date = entry.getKey();
+    //         Double value = entry.getValue();
+    //         series.getData().add(new XYChart.Data<>(date, value));
+    //     }
+    //     lineChart.getData().add(series);
+    // }
+
     @Override
     @FXML
-    public void popolateLineChart(final HashMap<String, Double> values) {
+    public void popolateLineChart(final List<Pair<String, Double>> values) {
         this.lineChart.getData().clear();
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("Time");
         yAxis.setLabel("Level");
+        this.lineChart.setLegendVisible(false);
         XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-        for (Map.Entry<String, Double> entry : values.entrySet()) {
-            String date = entry.getKey();
-            Double value = entry.getValue();
-            series.getData().add(new XYChart.Data<>(date, value));
-        }
+        values.forEach(p -> series.getData().add(new XYChart.Data<>(p.getX(), p.getY())));
         lineChart.getData().add(series);
     }
 

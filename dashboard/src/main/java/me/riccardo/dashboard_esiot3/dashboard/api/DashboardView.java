@@ -3,6 +3,7 @@ package me.riccardo.dashboard_esiot3.dashboard.api;
 import javafx.scene.input.MouseEvent;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface DashboardView {
 
@@ -24,6 +25,8 @@ public interface DashboardView {
 
     boolean isValveLevelLabelNull();
 
-    void popolateLineChart(HashMap<String, Double> values);
+    //void popolateLineChart(HashMap<String, Double> values);
+
+    void popolateLineChart(List<Pair<String, Double>> values);
 
 }

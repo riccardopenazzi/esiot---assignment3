@@ -3,6 +3,8 @@ package me.riccardo.dashboard_esiot3.dashboard.impl;
 import javafx.scene.chart.XYChart;
 import me.riccardo.dashboard_esiot3.dashboard.api.DashboardController;
 import me.riccardo.dashboard_esiot3.dashboard.api.DashboardModel;
+import me.riccardo.dashboard_esiot3.dashboard.api.Pair;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,6 +16,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Map;
@@ -31,7 +35,8 @@ public class DashboardModelImpl implements DashboardModel {
     private String riverLevel;
     private int valveLevel;
     private Double waterLevel;
-    private HashMap<String, Double> waterLevelHistory;
+    //private HashMap<String, Double> waterLevelHistory;
+    private List<Pair<String, Double>> waterLevelHistory;
     private final DashboardController controller;
 
 
@@ -39,7 +44,8 @@ public class DashboardModelImpl implements DashboardModel {
         this.riverLevel = riverLevel;
         this.valveLevel = valveLevel;
         this.controller = controller;
-        this.waterLevelHistory = new HashMap<>();
+        //this.waterLevelHistory = new HashMap<>();
+        this.waterLevelHistory = new ArrayList<>();
         Thread thread = new Thread(() ->{
             try {
                 this.client = new Socket(HOST, PORT);
@@ -93,7 +99,8 @@ public class DashboardModelImpl implements DashboardModel {
 
             String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
             //insertValue(time, this.waterLevel);
-            this.waterLevelHistory.put(time, this.waterLevel);
+            //this.waterLevelHistory.put(time, this.waterLevel);
+            insertValue(time, this.waterLevel);
             final StringBuilder numbers = new StringBuilder();
             for (final Object obj : jsonArray) {
                 numbers.append(obj).append(", ");
@@ -106,6 +113,13 @@ public class DashboardModelImpl implements DashboardModel {
         } catch (final ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    private void insertValue(final String time, final Double value) {
+        if (this.waterLevelHistory.size() >= MAX_SIZE) {
+            this.waterLevelHistory.remove(0);
+        }
+        this.waterLevelHistory.add(new Pair<String,Double>(time, value));
     }
 /*
     private void insertValue(final String time, final Double value) {
