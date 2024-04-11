@@ -4,6 +4,7 @@
 #include "StateManual.h"
 #include "EnableinterruptLib.h"
 #include "Tasks/ManualValve/ManualValve.h"
+#include "Tasks/AutomaticValve/AutomaticValve.h"
 #include "MsgService.h"
 
 bool backToRemote;
@@ -32,6 +33,11 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
     Task* manaulValveTask = new ManualValve(this->components);
     manaulValveTask->init(100);
     this->scheduler->addTask(manaulValveTask);
+
+    //automatic valve controlled by serial communication
+    Task* automaticValveTask = new AutomaticValve(this->components);
+    automaticValveTask->init(100);
+    this->scheduler->addTask(automaticValveTask);
 }
 
 bool StateManual::goNext(){
@@ -39,6 +45,7 @@ bool StateManual::goNext(){
 }
 
 StateManual::~StateManual(){
+    scheduler->removeLastTask(); //remove automatic valve task
     scheduler->removeLastTask(); //remove manual valve task
     this->components->getValve()->off();
 }
