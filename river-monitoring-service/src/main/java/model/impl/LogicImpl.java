@@ -21,38 +21,48 @@ public class LogicImpl implements Logic {
     private int valveLevel;
     private State state;
 
-    public LogicImpl(final double wl) {
+    public LogicImpl(final double wl, final boolean isManual) {
         this.waterLevel = wl;
-        updateEnvironment(this.waterLevel);
+        updateEnvironment(this.waterLevel, isManual);
     }
 
     @Override
-    public void updateEnvironment(final double wl) {
+    public void updateEnvironment(final double wl, boolean isManual) {
         /* water level < WL1 */
         if (wl < WL1) {
             this.state = State.ALARM_TOO_LOW;
             this.frequency = F1;
-            this.valveLevel = VL1;
-            /* WL1 <= water level <= WL2 */
+            if (!isManual) {
+                this.valveLevel = VL1;
+            }
+        /* WL1 <= water level <= WL2 */
         } else if (wl <= WL2) {
             this.state = State.NORMAL;
-            this.valveLevel = VL2;
             this.frequency = F1;
-            /* WL2 < water level <= WL3 */
+            if (!isManual) {
+                this.valveLevel = VL2;
+            }
+        /* WL2 < water level <= WL3 */
         } else if (wl <= WL3) {
             this.state = State.PRE_ALARM_TOO_HIGH;
             this.frequency = F2;
-            this.valveLevel = VL2;
-            /* WL3 < water level <= WL4 */
+            if (!isManual) {
+                this.valveLevel = VL2;
+            }
+        /* WL3 < water level <= WL4 */
         } else if (wl <= WL4) {
             this.state = State.ALARM_TOO_HIGH;
             this.frequency = F2;
-            this.valveLevel = VL3;
-            /* water level > WL4 */
+            if (!isManual) {
+                this.valveLevel = VL3;
+            }
+        /* water level > WL4 */
         } else {
             this.state = State.ALARM_TOO_HIGH_CRITIC;
             this.frequency = F2;
-            this.valveLevel = VL4;
+            if (!isManual) {
+                this.valveLevel = VL4;
+            }
         }
 
         System.out.println(

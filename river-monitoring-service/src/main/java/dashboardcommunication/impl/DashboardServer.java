@@ -2,6 +2,8 @@ package dashboardcommunication.impl;
 
 import jssc.CommChannel;
 import jssc.SerialCommChannel;
+
+import org.eclipse.paho.client.mqttv3.util.Strings;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -27,6 +29,8 @@ import java.util.Random;
 
 public class DashboardServer {
 
+    private static final String KEY = "state";
+
     private static final int PORT = 8080;
     private static final String mqttBroker = "tcp://test.mosquitto.org:1883";
     private static double waterLevel;
@@ -35,6 +39,7 @@ public class DashboardServer {
     private static boolean msgReceived = false;
     private static double oldFrequency = -1;
     private static String serialMsg;
+    private static boolean isManual = false;
 
     public static void main(String[] args) throws Exception {
         ServerSocket server = new ServerSocket(PORT);
@@ -49,7 +54,7 @@ public class DashboardServer {
         // SerialConnection
         CommChannel channel = new SerialCommChannel(SerialPort, SerialRate);
 
-        Logic logic = new LogicImpl(randomizer());
+        Logic logic = new LogicImpl(randomizer(), isManual);
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -67,26 +72,38 @@ public class DashboardServer {
             while (true) {
                 // System.out.println("Sto per entrare un attesa");
                 while (!msgReceived) {
-                    /* if (channel.isMsgAvailable()) {
+                    if (channel.isMsgAvailable()) {
                         try {
                             serialMsg = channel.receiveMsg();
-                            
+                            /* Manual mode */
+                            if (serialMsg.equalsIgnoreCase("manual")) {
+                                System.out.println("MANUAL");
+                                isManual = true;
+                            /* Automatic mode */
+                            } else if (serialMsg.equalsIgnoreCase("automatic")) {
+                                System.out.println("AUTOMATIC");
+                                isManual = false;
+                            }
+
+                            String valveLevel = channel.receiveMsg();
+                            if (isManual && !valveLevel.equalsIgnoreCase("automatic")) {
+                                logic.setValveLevel(Integer.parseInt(valveLevel));
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    } */
+                    }
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
                 // System.out.println("Fine attesa");
                 msgReceived = false;
+                logic.updateEnvironment(waterLevel, isManual);
                 String data = createData(logic);
                 out.println(data);
-                logic.updateEnvironment(waterLevel);
                 // System.out.println("Old: " + oldFrequency + " current: " +
                 // logic.getFrequency());
                 if (oldFrequency != logic.getFrequency() || oldFrequency == -1) {
