@@ -9,8 +9,9 @@ class ManualValve: public Task {
   private:
     Components* components;
     int potentiometer;
+    int lastAngle;
   public:
-    ManualValve(Components* components);  
+    ManualValve(Components* components, int initialAngle = 0);  
     void init(int period);  
     void tick();
 };

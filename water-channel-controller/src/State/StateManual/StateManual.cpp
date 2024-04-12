@@ -30,7 +30,7 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
     MsgService.sendMsg("Manual");
 
     //manual valve controlled by potentiometer
-    Task* manaulValveTask = new ManualValve(this->components);
+    Task* manaulValveTask = new ManualValve(this->components, this->valveAngle);
     manaulValveTask->init(100);
     this->scheduler->addTask(manaulValveTask);
 

@@ -3,9 +3,10 @@
 #include "Arduino.h"
 #include "MsgService.h"
 
-ManualValve::ManualValve(Components* components){
+ManualValve::ManualValve(Components* components, int initialAngle){
   this->components = components;    
   this->potentiometer = 0;
+  this->lastAngle = initialAngle;
 }
   
 void ManualValve::init(int period){
@@ -15,7 +16,10 @@ void ManualValve::init(int period){
 void ManualValve::tick(){
   this->potentiometer= analogRead(PIN_POTENTIOMETER);
   int angle = map(this->potentiometer, 0, 1023, 0, 180);
-  this->components->getValve()->on();
-  this->components->getValve()->setPosition(angle);
-  MsgService.sendMsg(String(angle));
+  if(angle != this->lastAngle){
+    this->lastAngle = angle;
+    this->components->getValve()->on();
+    this->components->getValve()->setPosition(angle);
+    MsgService.sendMsg(String(angle));
+  }
 }
