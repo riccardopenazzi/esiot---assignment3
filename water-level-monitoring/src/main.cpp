@@ -13,10 +13,11 @@
 #define frequency_topic "sensor/sonar/frequency"
 
 long duration, distance;
-int frequency = 1000;
+int period = 1000;
+unsigned long timer;
 
-const char *ssid = "**";
-const char *psw = "**";
+const char *ssid = "ASUS";
+const char *psw = "lucia1999";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -25,7 +26,7 @@ void sonar_monitor();
 void setup_wifi();
 void check_network();
 void reconnect();
-void set_frequency(const char *freq);
+void set_period(const char *freq);
 void callback(char *topic, byte *payload, unsigned int length);
 
 void setup()
@@ -39,6 +40,7 @@ void setup()
 	setup_wifi();
 	client.setServer(mqtt_server, 1883); // default port
 	client.setCallback(callback);
+	timer = millis();
 }
 
 void loop()
@@ -49,8 +51,11 @@ void loop()
 	}
 	client.loop();
 	check_network();
-	sonar_monitor();
-	delay(frequency);
+	if (millis() - timer > period)
+	{
+		sonar_monitor();
+		timer = millis();
+	}
 }
 
 void sonar_monitor()
@@ -71,7 +76,7 @@ void setup_wifi()
 {
 	delay(10);
 	Serial.println(String("Connecting to ") + ssid);
-	// WiFi.useStaticBuffers(true);
+	WiFi.useStaticBuffers(true);
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(ssid, psw);
 	while (WiFi.status() != WL_CONNECTED)
@@ -123,16 +128,10 @@ void reconnect()
 	}
 }
 
-void set_frequency(const char *freq)
+void set_period(const char *freq)
 {
-	if (strcmp(freq, "0.08") == 0)
-	{
-		frequency = 12000;
-	}
-	else if (strcmp(freq, "0.12") == 0)
-	{
-		frequency = 8000;
-	}
+	double f = atof(freq);
+	period = 1 / f * 1000;
 }
 
 void callback(char *topic, byte *payload, unsigned int length)
@@ -143,6 +142,6 @@ void callback(char *topic, byte *payload, unsigned int length)
 	if (strcmp(topic, frequency_topic) == 0)
 	{
 		Serial.println("Frequency received: " + message);
-		set_frequency(message.c_str());
+		set_period(message.c_str());
 	}
 }
