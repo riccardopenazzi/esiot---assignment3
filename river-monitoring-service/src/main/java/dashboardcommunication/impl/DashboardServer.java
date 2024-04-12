@@ -36,7 +36,7 @@ public class DashboardServer {
     private static final int PORT = 8080;
     private static final String mqttBroker = "tcp://test.mosquitto.org:1883";
     private static double waterLevel;
-    private static final String SerialPort = "COM8";
+    private static final String SerialPort = "COM3";
     private static final int SerialRate = 9600;
     private static boolean msgReceived = false;
     private static double oldFrequency = -1;
@@ -82,24 +82,26 @@ public class DashboardServer {
 
                             String mode = (String) serialMsgJson.get("mode");
                             String currentValveOpeningPercentage = (String) serialMsgJson.get("valve");
+                            // System.out.println("mode:"+mode+" currentValveOpeningPercentage:"+currentValveOpeningPercentage);
 
                             isManual = mode.equalsIgnoreCase("manual");
-                            System.out.println("mode:"+mode+" isManual:"+isManual);
+                            // System.out.println("mode:"+mode+" isManual:"+isManual);
 
                             if (isManual) {
                                 logic.setValveLevel(Integer.parseInt(currentValveOpeningPercentage));
+                                //the valve level is set but not yet sent to the dashboard
                             }
                         } catch (InterruptedException | ParseException e) {
                             e.printStackTrace();
                         }
                     }
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-                // System.out.println("Fine attesa");
+                //System.out.println("Fine attesa");
                 msgReceived = false;
                 logic.updateEnvironment(waterLevel, isManual);
                 String data = createData(logic);
