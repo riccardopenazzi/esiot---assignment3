@@ -27,7 +27,8 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
     components->getLcd()->setCursor(0, 0); 
     components->getLcd()->print("Manual");
 
-    MsgService.sendMsg("Manual");
+    String msg = '{\"mode\":\"Manual\",\"valve\":\"'+String(valveAngle)+'\"}'; 
+    MsgService.sendMsg(msg);
 
     //manual valve controlled by potentiometer
     Task* manaulValveTask = new ManualValve(this->components, this->valveAngle);

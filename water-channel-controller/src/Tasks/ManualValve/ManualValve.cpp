@@ -20,6 +20,7 @@ void ManualValve::tick(){
     this->lastAngle = angle;
     this->components->getValve()->on();
     this->components->getValve()->setPosition(angle);
-    MsgService.sendMsg(String(angle));
+    String msg = '{\"mode\":\"Manual\",\"valve\":\"'+String(angle)+'\"}'; 
+    MsgService.sendMsg(msg);
   }
 }
