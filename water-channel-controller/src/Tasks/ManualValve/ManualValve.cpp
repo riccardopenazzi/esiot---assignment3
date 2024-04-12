@@ -20,8 +20,7 @@ void ManualValve::tick(){
     this->lastAngle = angle;
     this->components->getValve()->on();
     this->components->getValve()->setPosition(angle);
-    int openingPercentage = map(angle, 0, 180, 0, 100);
-    String msg = '{\"mode\":\"Manual\",\"valve\":\"'+String(openingPercentage)+'\"}'; 
-    MsgService.sendMsg(msg);
+    int openingPercentage = map(angle, 0, 180, 0, 100); 
+    MsgService.sendMsg("{\"mode\":\"Manual\",\"valve\":\""+String(openingPercentage)+"\"}");
   }
 }
