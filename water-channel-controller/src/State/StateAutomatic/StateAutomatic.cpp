@@ -27,7 +27,8 @@ StateAutomatic::StateAutomatic(int valveAngle, Components* components, Scheduler
 
     enableInterruptLib(PIN_BUTTON, this->buttonPressedCallback, RISING);
 
-    String msg = '{\"mode\":\"Automatic\",\"valve\":\"'+String(valveAngle)+'\"}'; 
+    int openingPercentage = map(valveAngle, 0, 180, 0, 100);
+    String msg = '{\"mode\":\"Automatic\",\"valve\":\"'+String(openingPercentage)+'\"}'; 
     MsgService.sendMsg(msg);
 
     //automatic valve controlled by serial communication
