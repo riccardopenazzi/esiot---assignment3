@@ -13,6 +13,8 @@ import model.impl.LogicImpl;
 import model.impl.SystemStateImpl;
 import mqtt.api.OnMessageReceivedListener;
 import mqtt.impl.MqttManager;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,6 +46,7 @@ public class DashboardServer {
     public static void main(String[] args) throws Exception {
         ServerSocket server = new ServerSocket(PORT);
         Socket socket = server.accept();
+        JSONParser parser = new JSONParser();
 
         System.out.println("Client connected");
 
@@ -75,21 +78,18 @@ public class DashboardServer {
                     if (channel.isMsgAvailable()) {
                         try {
                             serialMsg = channel.receiveMsg();
-                            /* Manual mode */
-                            if (serialMsg.equalsIgnoreCase("manual")) {
-                                System.out.println("MANUAL");
-                                isManual = true;
-                            /* Automatic mode */
-                            } else if (serialMsg.equalsIgnoreCase("automatic")) {
-                                System.out.println("AUTOMATIC");
-                                isManual = false;
-                            }
+                            JSONObject serialMsgJson = (JSONObject) parser.parse(serialMsg);
 
-                            String valveLevel = channel.receiveMsg();
-                            if (isManual && !valveLevel.equalsIgnoreCase("automatic")) {
-                                logic.setValveLevel(Integer.parseInt(valveLevel));
+                            String mode = (String) serialMsgJson.get("mode");
+                            String currentValveOpeningPercentage = (String) serialMsgJson.get("valve");
+
+                            isManual = mode.equalsIgnoreCase("manual");
+                            System.out.println("mode:"+mode+" isManual:"+isManual);
+
+                            if (isManual) {
+                                logic.setValveLevel(Integer.parseInt(currentValveOpeningPercentage));
                             }
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException | ParseException e) {
                             e.printStackTrace();
                         }
                     }
@@ -104,6 +104,10 @@ public class DashboardServer {
                 logic.updateEnvironment(waterLevel, isManual);
                 String data = createData(logic);
                 out.println(data);
+                //send valve level to water-channel-controller
+                if(!isManual){
+                    channel.sendMsg(String.valueOf(logic.getValveLevel()));
+                }
                 // System.out.println("Old: " + oldFrequency + " current: " +
                 // logic.getFrequency());
                 if (oldFrequency != logic.getFrequency() || oldFrequency == -1) {
@@ -118,7 +122,10 @@ public class DashboardServer {
 
         while ((temp = reader.readLine()) != null) {
             logic.setValveLevel(Integer.parseInt((temp)));
-            channel.sendMsg(String.valueOf(logic.getValveLevel()));
+            //send valve level to water-channel-controller
+            if(isManual){
+                channel.sendMsg(String.valueOf(logic.getValveLevel()));
+            }
         }
         server.close();
     }
