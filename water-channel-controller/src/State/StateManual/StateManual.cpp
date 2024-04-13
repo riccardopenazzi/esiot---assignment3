@@ -4,7 +4,7 @@
 #include "StateManual.h"
 #include "EnableinterruptLib.h"
 #include "Tasks/ManualValve/ManualValve.h"
-#include "Tasks/AutomaticValve/AutomaticValve.h"
+#include "Tasks/RemoteValve/RemoteValve.h"
 #include "MsgService.h"
 
 bool backToRemote;
@@ -16,7 +16,7 @@ StateName StateManual::name(){
 StateManual::StateManual(int valveAngle, Components* components, Scheduler* scheduler){
     this->components = components;
     this->scheduler = scheduler;
-    this->valveAngle = valveAngle;
+    this->valveAngles = new ValveAngles(valveAngle, valveAngle);
     backToRemote = false;
 
     this->components->getValve()->on();
@@ -27,18 +27,18 @@ StateManual::StateManual(int valveAngle, Components* components, Scheduler* sche
     components->getLcd()->setCursor(0, 0); 
     components->getLcd()->print("Manual");
 
-    int openingPercentage = map(valveAngle, 0, 180, 0, 100); 
+    int openingPercentage = map(valveAngles->potentiometer, 0, 180, 0, 100); 
     MsgService.sendMsg("{\"mode\":\"Manual\",\"valve\":\""+String(openingPercentage)+"\"}");
 
     //manual valve controlled by potentiometer
-    Task* manaulValveTask = new ManualValve(this->components, this->valveAngle);
+    Task* manaulValveTask = new ManualValve(this->components, this->valveAngles);
     manaulValveTask->init(100);
     this->scheduler->addTask(manaulValveTask);
 
     //automatic valve controlled by serial communication
-    Task* automaticValveTask = new AutomaticValve(this->components);
-    automaticValveTask->init(100);
-    this->scheduler->addTask(automaticValveTask);
+    Task* RemoteValveTask = new RemoteValve(this->components, this->valveAngles);
+    RemoteValveTask->init(100);
+    this->scheduler->addTask(RemoteValveTask);
 }
 
 bool StateManual::goNext(){
@@ -46,7 +46,7 @@ bool StateManual::goNext(){
 }
 
 StateManual::~StateManual(){
-    scheduler->removeLastTask(); //remove automatic valve task
+    scheduler->removeLastTask(); //remove remote valve task
     scheduler->removeLastTask(); //remove manual valve task
     this->components->getValve()->off();
 }

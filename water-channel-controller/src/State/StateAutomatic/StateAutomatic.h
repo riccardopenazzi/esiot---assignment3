@@ -4,6 +4,7 @@
 #include <Scheduler.h>
 #include "State/State.h"
 #include "Components/Components.h"
+#include "State/StateManual/ValveAngles.h"
 
 extern bool goToManual;
 
@@ -14,13 +15,12 @@ class StateAutomatic: public State {
         }
         Components* components;
         Scheduler* scheduler;
+        ValveAngles* valveAngles;
     public:
         StateAutomatic(int valveAngle, Components* components, Scheduler* scheduler);
         ~StateAutomatic();
         StateName name();
         bool goNext();
-        void openValve();
-        void closeValve();
 };
 
 #endif

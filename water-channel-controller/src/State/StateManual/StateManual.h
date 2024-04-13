@@ -4,6 +4,7 @@
 #include <Scheduler.h>
 #include "State/State.h"
 #include "Components/Components.h"
+#include "State/StateManual/ValveAngles.h"
 
 extern bool backToRemote;
 
@@ -14,6 +15,7 @@ class StateManual: public State {
         }
         Components* components;
         Scheduler* scheduler;
+        ValveAngles* valveAngles;
     public:
         StateManual(int valveAngle, Components* components, Scheduler* scheduler);
         ~StateManual();

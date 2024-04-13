@@ -4,14 +4,15 @@
 #include "Task.h"
 #include "servo_motor_impl.h"
 #include "Components/Components.h"
+#include "State/StateManual/ValveAngles.h"
 
 class ManualValve: public Task {
   private:
     Components* components;
+    ValveAngles* valveAngles;
     int potentiometer;
-    int lastAngle;
   public:
-    ManualValve(Components* components, int initialAngle = 0);  
+    ManualValve(Components* components, ValveAngles* valveAngles);  
     void init(int period);  
     void tick();
 };

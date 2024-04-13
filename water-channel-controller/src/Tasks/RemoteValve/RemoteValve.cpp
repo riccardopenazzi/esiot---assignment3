@@ -1,23 +1,24 @@
-#include "AutomaticValve.h"
+#include "RemoteValve.h"
 #include "Config.h"
 #include "Arduino.h"
 #include "MsgService.h"
 
-AutomaticValve::AutomaticValve(Components* components){
-  this->components = components;    
-  this->potentiometer = 0;
+RemoteValve::RemoteValve(Components* components, ValveAngles* valveAngles){
+  this->components = components;
+  this->valveAngles = valveAngles;
 }
   
-void AutomaticValve::init(int period){
+void RemoteValve::init(int period){
   Task::init(period);
 }
   
-void AutomaticValve::tick(){
+void RemoteValve::tick(){
   if(MsgService.isMsgAvailable()){
         Msg* msg = MsgService.receiveMsg();
         String msgContent = msg->getContent();
         int percentage = msgContent.toInt(); 
         int angle = map(percentage, 0, 100, 0, 180);
+        valveAngles->remote = angle;
         this->components->getValve()->on();
         this->components->getValve()->setPosition(angle);
         delete msg;

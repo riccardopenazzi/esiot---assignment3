@@ -3,7 +3,7 @@
 #include <Config.h>
 #include "StateAutomatic.h"
 #include "EnableinterruptLib.h"
-#include "Tasks/AutomaticValve/AutomaticValve.h"
+#include "Tasks/RemoteValve/RemoteValve.h"
 #include "MsgService.h"
 
 bool goToManual;
@@ -15,7 +15,7 @@ StateName StateAutomatic::name(){
 StateAutomatic::StateAutomatic(int valveAngle, Components* components, Scheduler* scheduler){
     this->components = components;
     this->scheduler = scheduler;
-    this->valveAngle = valveAngle;
+    this->valveAngles = new ValveAngles(valveAngle, valveAngle);
     goToManual = false;
 
     this->components->getValve()->on();
@@ -31,26 +31,16 @@ StateAutomatic::StateAutomatic(int valveAngle, Components* components, Scheduler
     MsgService.sendMsg("{\"mode\":\"Automatic\",\"valve\":\""+String(openingPercentage)+"\"}");
 
     //automatic valve controlled by serial communication
-    Task* automaticValveTask = new AutomaticValve(this->components);
-    automaticValveTask->init(100);
-    this->scheduler->addTask(automaticValveTask);
+    Task* remoteValveTask = new RemoteValve(this->components, this->valveAngles);
+    remoteValveTask->init(100);
+    this->scheduler->addTask(remoteValveTask);
 }
 
 bool StateAutomatic::goNext(){
     return goToManual;
 }
 
-void StateAutomatic::openValve(){
-    this->valveAngle = VALVE_OPEN;
-    this->components->getValve()->setPosition(this->valveAngle);
-}
-
-void StateAutomatic::closeValve(){
-    this->valveAngle = VALVE_CLOSE;
-    this->components->getValve()->setPosition(this->valveAngle);
-}
-
 StateAutomatic::~StateAutomatic(){
-    scheduler->removeLastTask(); //remove automatic valve task
+    scheduler->removeLastTask(); //remove remote valve task
     this->components->getValve()->off();
 }
