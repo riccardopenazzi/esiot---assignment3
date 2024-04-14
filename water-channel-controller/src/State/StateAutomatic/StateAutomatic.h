@@ -4,7 +4,7 @@
 #include <Scheduler.h>
 #include "State/State.h"
 #include "Components/Components.h"
-#include "State/StateManual/ValveAngles.h"
+#include <ValveAngles.h>
 
 extern bool goToManual;
 

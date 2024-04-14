@@ -1,5 +1,5 @@
-#ifndef __TASK_MANUAL_VALVE__
-#define __TASK_MANUAL_VALVE__
+#ifndef __TASK_VALVE_ANLGES__
+#define __TASK_VALVE_ANLGES__
 
 class ValveAngles {
     public:
