@@ -73,7 +73,6 @@ public class DashboardServer {
 
             });
             while (true) {
-                // System.out.println("Sto per entrare un attesa");
                 while (!msgReceived) {
                     if (channel.isMsgAvailable()) {
                         try {
@@ -82,10 +81,8 @@ public class DashboardServer {
 
                             String mode = (String) serialMsgJson.get("mode");
                             String currentValveOpeningPercentage = (String) serialMsgJson.get("valve");
-                            // System.out.println("mode:"+mode+" currentValveOpeningPercentage:"+currentValveOpeningPercentage);
 
                             isManual = mode.equalsIgnoreCase("manual");
-                            // System.out.println("mode:"+mode+" isManual:"+isManual);
 
                             if (isManual) {
                                 logic.setValveLevel(Integer.parseInt(currentValveOpeningPercentage));
@@ -101,7 +98,6 @@ public class DashboardServer {
                         e.printStackTrace();
                     }
                 }
-                //System.out.println("Fine attesa");
                 msgReceived = false;
                 logic.updateEnvironment(waterLevel, isManual);
                 String data = createData(logic);
@@ -110,8 +106,6 @@ public class DashboardServer {
                 if(!isManual){
                     channel.sendMsg(String.valueOf(logic.getValveLevel()));
                 }
-                // System.out.println("Old: " + oldFrequency + " current: " +
-                // logic.getFrequency());
                 if (oldFrequency != logic.getFrequency() || oldFrequency == -1) {
                     System.out.println("Aggiorno valore");
                     mqttManager.sendMessage(String.valueOf(logic.getFrequency()));

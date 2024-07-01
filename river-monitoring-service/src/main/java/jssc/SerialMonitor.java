@@ -2,7 +2,6 @@ package jssc;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import jssc.*;
 
 public class SerialMonitor implements SerialPortEventListener {
 	SerialPort serialPort;

@@ -1,9 +1,7 @@
 package me.riccardo.dashboard_esiot3.dashboard.impl;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
@@ -101,24 +99,6 @@ public class DashboardViewImpl implements DashboardView, Initializable {
             setValveLevel(String.valueOf(this.controller.getValveLevel()));
         }
     }
-
-    // @Override
-    // @FXML
-    // public void popolateLineChart(final HashMap<String, Double> values) {
-    //     this.lineChart.getData().clear();
-    //     CategoryAxis xAxis = new CategoryAxis();
-    //     NumberAxis yAxis = new NumberAxis();
-    //     xAxis.setLabel("Time");
-    //     yAxis.setLabel("Level");
-    //     XYChart.Series<String, Number> series = new XYChart.Series<>();
-
-    //     for (Map.Entry<String, Double> entry : values.entrySet()) {
-    //         String date = entry.getKey();
-    //         Double value = entry.getValue();
-    //         series.getData().add(new XYChart.Data<>(date, value));
-    //     }
-    //     lineChart.getData().add(series);
-    // }
 
     @Override
     @FXML

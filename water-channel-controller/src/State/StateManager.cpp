@@ -21,7 +21,6 @@ void StateManager::switchState(){
         }
         delete this->state;
         this->state = nextState;
-        //Serial.println(getStateNameString(this->state->name()));
     }
 }
 
