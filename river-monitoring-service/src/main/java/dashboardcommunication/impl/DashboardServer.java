@@ -86,7 +86,6 @@ public class DashboardServer {
 
                             if (isManual) {
                                 logic.setValveLevel(Integer.parseInt(currentValveOpeningPercentage));
-                                //the valve level is set but not yet sent to the dashboard
                                 logic.updateEnvironment(waterLevel, isManual);
                                 String data = createData(logic);
                                 out.println(data);
